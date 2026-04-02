@@ -5,9 +5,59 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  output   = "generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  polls Poll[]
+  votes Vote[]
+}
+
+model Poll {
+  id        String    @id @default(cuid())
+  question  String
+  creatorId String
+  isActive  Boolean   @default(true)
+  expiresAt DateTime?
+  shareCode String    @unique @default(cuid())
+  createdAt DateTime  @default(now())
+
+  creator User     @relation(fields: [creatorId], references: [id])
+  options Option[]
+  votes   Vote[]
+}
+
+model Option {
+  id     String @id @default(cuid())
+  pollId String
+  text   String
+  order  Int
+
+  poll  Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes Vote[]
+}
+
+model Vote {
+  id         String   @id @default(cuid())
+  pollId     String
+  optionId   String
+  userId     String?
+  voterToken String?
+  createdAt  DateTime @default(now())
+
+  poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  option Option @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  user   User?   @relation(fields: [userId], references: [id])
+
+  @@unique([pollId, userId])
 }
