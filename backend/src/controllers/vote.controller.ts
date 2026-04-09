@@ -3,6 +3,8 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { createVoteSchema } from "../types/vote.types";
 import { prisma } from "../db";
 import { Prisma } from "../db/generated/prisma/client";
+import { pollSubscribers } from "../ws/wsServer";
+import { WebSocket } from "ws";
 
 export const submitVote = async (req: Request, res: Response) => {
     let userId: string | null = null;
@@ -59,6 +61,16 @@ export const submitVote = async (req: Request, res: Response) => {
             where: { pollId },
             include: { _count: { select: { votes: true } } }
         })
+
+        const subscribers = pollSubscribers.get(pollId);
+        if (subscribers) {
+            const payload = JSON.stringify({ type: 'vote_update', pollId, results })
+            subscribers.forEach((subscriber) => {
+                if (subscriber.readyState === WebSocket.OPEN) {
+                    subscriber.send(payload)
+                }
+            })
+        }
 
         return res.status(201).json({ message: "Vote submitted", results })
     }
