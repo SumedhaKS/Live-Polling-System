@@ -100,3 +100,19 @@ export const updatePoll = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Internal server error" })
     }
 }
+
+export const getAllPolls = async (req: Request, res: Response) => {
+    const userId = req.user.userId;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+    try {
+        const polls = await prisma.poll.findMany({ where: { creatorId: userId }, include: { options: true } })
+        if (polls.length === 0) {
+            return res.status(404).json({ message: "No polls found", polls: [] })
+        }
+        return res.status(200).json({ message: "Polls fetched successfully", polls })
+    }
+    catch (err) {
+        console.error(`Error while fetching polls: ${err}`);
+        return res.status(500).json({ message: "Internal server error" })
+    }
+}
