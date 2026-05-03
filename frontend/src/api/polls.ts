@@ -1,12 +1,27 @@
-// import axios from 'axios'
+import axios from 'axios'
 
-// const api = axios.create({ baseURL: 'http://localhost:3000/api' })
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL })
 
-// // hint: all poll routes except getPoll need the token in headers
-// // axios accepts headers as a third argument:
-// // api.post('/polls', data, { headers: { Authorization: `Bearer ${token}` } })
+const authHeader = (token: string) => ({
+  headers: { Authorization: `Bearer ${token}` }
+})
 
-// export const getUserPolls = async (token: string) => { ... }
-// export const createPoll = async (question: string, options: string[], token: string) => { ... }
-// export const deletePoll = async (id: string, token: string) => { ... }
-// export const togglePoll = async (id: string, token: string) => { ... }
+export const getUserPolls = async (token: string) => {
+  const res = await api.get('/polls', authHeader(token))
+  return res.data.polls
+}
+
+export const createPoll = async (question: string, options: string[], token: string) => {
+  const res = await api.post('/polls', { question, options }, authHeader(token))
+  return res.data
+}
+
+export const deletePoll = async (id: string, token: string) => {
+  const res = await api.delete(`/polls/${id}`, authHeader(token))
+  return res.data
+}
+
+export const togglePoll = async (id: string, token: string) => {
+  const res = await api.patch(`/polls/${id}/toggle`, {}, authHeader(token))
+  return res.data
+}
