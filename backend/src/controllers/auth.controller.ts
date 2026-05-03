@@ -20,7 +20,7 @@ export const register = async (req: Request, res: Response) => {
                 message: "Email already in use"
             })
         }
-        const hashedPassword = await bcrypt.hash(password, 21)
+        const hashedPassword = await bcrypt.hash(password, 10)
 
         const user = await prisma.user.create({
             data: {
