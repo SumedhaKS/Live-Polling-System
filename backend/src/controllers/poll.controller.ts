@@ -46,7 +46,11 @@ export const getPolls = async (req: Request, res: Response) => {
     try {
         const poll = await prisma.poll.findUnique({
             where: { shareCode },
-            include: { options: true }
+            include: {
+                options: {
+                    include: { _count: { select: { votes: true } } }
+                }
+            }
         })
 
         if (!poll) return res.status(404).json({ message: "Poll not found" })
@@ -57,7 +61,7 @@ export const getPolls = async (req: Request, res: Response) => {
         })
     }
     catch (err) {
-        console.log(`Error while fetching poll: ${err}`);
+        console.error(`Error while fetching poll: ${err}`);
         return res.status(500).json({ message: "Internal server error" })
     }
 }
