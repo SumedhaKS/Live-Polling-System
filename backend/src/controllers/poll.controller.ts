@@ -15,17 +15,18 @@ export const createPoll = async (req: Request, res: Response) => {
     try {
         const poll = await prisma.poll.create({
             data: {
-                question: parsed.data.question,
-                creatorId: userId,
-                options: {
-                    create: parsed.data.options.map((text: string, i: number) => ({
-                        text,
-                        order: i
-                    }))
-                }
+              question: parsed.data.question,
+              creatorId: userId,
+              expiresAt: parsed.data.expiresAt ? new Date(parsed.data.expiresAt) : null,
+              options: {
+                create: parsed.data.options.map((text: string, i: number) => ({
+                  text,
+                  order: i
+                }))
+              }
             },
             include: { options: true }
-        })
+          })
 
         return res.status(201).json({
             message: "Poll created successfully",
@@ -33,7 +34,7 @@ export const createPoll = async (req: Request, res: Response) => {
         })
     }
     catch (err) {
-        console.error(`Error while creating poll: ${err}`);
+        console.error(`Error while creating poll: ${err instanceof Error ? err.message : err}`);
         return res.status(500).json({ message: "Internal server error" })
     }
 }
@@ -61,7 +62,7 @@ export const getPolls = async (req: Request, res: Response) => {
         })
     }
     catch (err) {
-        console.error(`Error while fetching poll: ${err}`);
+        console.error(`Error while fetching poll: ${err instanceof Error ? err.message : err}`);
         return res.status(500).json({ message: "Internal server error" })
     }
 }
@@ -79,7 +80,7 @@ export const deletePoll = async (req: Request, res: Response) => {
         if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
             return res.status(404).json({ message: "Poll not found or Unauthorized" })
         }
-        console.error(`Error while deleting poll: ${err}`);
+        console.error(`Error while deleting poll: ${err instanceof Error ? err.message : err}`);
         return res.status(500).json({ message: "Internal server error" })
     }
 }
@@ -100,7 +101,7 @@ export const updatePoll = async (req: Request, res: Response) => {
         return res.status(200).json({ message: "Poll status toggled", poll: updated })
     }
     catch (err) {
-        console.error(`Error while toggling poll : ${err}`);
+        console.error(`Error while toggling poll : ${err instanceof Error ? err.message : err}`);
         return res.status(500).json({ message: "Internal server error" })
     }
 }
@@ -116,7 +117,7 @@ export const getAllPolls = async (req: Request, res: Response) => {
         return res.status(200).json({ message: "Polls fetched successfully", polls })
     }
     catch (err) {
-        console.error(`Error while fetching polls: ${err}`);
+        console.error(`Error while fetching polls: ${err instanceof Error ? err.message : err}`);
         return res.status(500).json({ message: "Internal server error" })
     }
 }

@@ -46,7 +46,7 @@ export const register = async (req: Request, res: Response) => {
         })
     }
     catch (err) {
-        console.error(`Error while creating user: ${err}`);
+        console.error(`Error while creating user: ${err instanceof Error ? err.message : err}`);
         return res.status(500).json("Internal server error")
     }
 }
@@ -91,7 +91,7 @@ export const login = async (req: Request, res: Response) => {
         })
     }
     catch (err) {
-        console.error(`Error while user login: ${err}`);
+        console.error(`Error while user login: ${err instanceof Error ? err.message : err}`);
         return res.status(500).json({
             message: "Internal server error"
         })

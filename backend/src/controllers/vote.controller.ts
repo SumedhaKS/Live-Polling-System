@@ -38,7 +38,11 @@ export const submitVote = async (req: Request, res: Response) => {
         if (!poll) return res.status(404).json({ message: "Poll not found" });
         if (poll.isActive === false) return res.status(400).json({ message: "Poll closed" });
 
-        const validOption = poll.options.some(option => option.id === optionId)
+        if (poll.expiresAt && poll.expiresAt < new Date()) {
+            return res.status(400).json({ message: "Poll has expired" })
+        }
+
+        const validOption = poll.options.some((option: { id: string }) => option.id === optionId)
         if (!validOption) return res.status(400).json({ message: "Invalid option" });
 
         if (voterToken) {
@@ -78,7 +82,7 @@ export const submitVote = async (req: Request, res: Response) => {
         if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
             return res.status(409).json({ message: "Already voted" })
         }
-        console.error(`Error while submitting vote: ${err}`);
+        console.error(`Error while submitting vote: ${err instanceof Error ? err.message : err}`);
         return res.status(500).json({ message: "Internal server error" })
     }
 }
