@@ -11,8 +11,17 @@ export const getUserPolls = async (token: string) => {
   return res.data.polls
 }
 
-export const createPoll = async (question: string, options: string[], token: string) => {
-  const res = await api.post('/polls', { question, options }, authHeader(token))
+export const createPoll = async (
+  question: string,
+  options: string[],
+  expiresAt: string | null,
+  token: string
+) => {
+  const res = await api.post('/polls', {
+    question,
+    options,
+    expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null
+  }, authHeader(token))
   return res.data
 }
 

@@ -26,6 +26,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [expiresAt, setExpiresAt] = useState('')
 
   useEffect(() => {
     const token = getToken()
@@ -64,7 +65,7 @@ export default function Dashboard() {
     try {
       setLoading(true)
       setError('')
-      await createPoll(question, options, getToken()!)
+      await createPoll(question, options, expiresAt || null, getToken()!)
       setQuestion('')
       setOptions(['', ''])
       fetchPolls()
@@ -99,7 +100,7 @@ export default function Dashboard() {
     setCopiedId(pollId)
     setTimeout(() => setCopiedId(null), 2000)  // reset after 2 seconds
   }
-  
+
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -138,6 +139,21 @@ export default function Dashboard() {
                   className="text-gray-400 hover:text-red-500 text-sm px-2">✕</button>
               </div>
             ))}
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">
+                Expiry date
+                <span className="text-gray-400 font-normal"> (optional)</span>
+              </label>
+              <input
+                type="datetime-local"
+                value={expiresAt}
+                onChange={e => setExpiresAt(e.target.value)}
+                min={new Date().toISOString().slice(0, 16)}  // can't set past dates
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
             <button onClick={handleAddOption}
               className="text-blue-600 text-sm hover:underline text-left">
               + Add option
