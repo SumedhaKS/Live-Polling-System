@@ -96,7 +96,10 @@ export const updatePoll = async (req: Request, res: Response) => {
 
         const updated = await prisma.poll.update({
             where: { id },
-            data: { isActive: !poll.isActive }
+            data: { 
+                isActive: !poll.isActive,
+                expiresAt: poll.isActive ? poll.expiresAt : null
+            }
         })
         return res.status(200).json({ message: "Poll status toggled", poll: updated })
     }
