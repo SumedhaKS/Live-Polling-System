@@ -135,7 +135,7 @@ export default function Dashboard() {
               <input
                 type="datetime-local" className={inputClass} value={expiresAt}
                 onChange={e => setExpiresAt(e.target.value)}
-                min={new Date().toISOString().slice(0, 16)}
+                min={new Date(Date.now() + 3 * 60 * 1000).toISOString().slice(0, 16)}
               />
             </div>
 
