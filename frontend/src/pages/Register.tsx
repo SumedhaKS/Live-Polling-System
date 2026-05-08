@@ -7,9 +7,9 @@ import { useAuth } from '../hooks/useAuth'
 import { useState } from 'react'
 
 const registerSchema = z.object({
-  email: z.string().email('Invalid email'),
+  email: z.email('Invalid email'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
-  name: z.string().min(4, 'Name must be at least 4 characters').optional(),
+  name: z.string().optional(),
 })
 
 type RegisterForm = z.infer<typeof registerSchema>
