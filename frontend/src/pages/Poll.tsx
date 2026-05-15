@@ -72,10 +72,24 @@ export default function Poll() {
     datasets: [{
       label: 'Votes',
       data: results.map(o => o._count?.votes ?? 0),
-      backgroundColor: '#c5a97d99',
-      borderColor: '#c5a97d',
-      borderWidth: 1,
-      borderRadius: 8,
+      backgroundColor: [
+        'rgba(245, 158, 11, 0.8)',
+        'rgba(16, 185, 129, 0.8)',
+        'rgba(59, 130, 246, 0.8)',
+        'rgba(139, 92, 246, 0.8)',
+        'rgba(236, 72, 153, 0.8)',
+        'rgba(20, 184, 166, 0.8)',
+      ],
+      borderColor: [
+        'rgb(245, 158, 11)',
+        'rgb(16, 185, 129)',
+        'rgb(59, 130, 246)',
+        'rgb(139, 92, 246)',
+        'rgb(236, 72, 153)',
+        'rgb(20, 184, 166)',
+      ],
+      borderWidth: 2,
+      borderRadius: 10,
       borderSkipped: false,
     }]
   }
@@ -86,16 +100,15 @@ export default function Poll() {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#252527',
-        borderColor: '#3a3a3c',
-        borderWidth: 1,
-        titleColor: '#d8d6d0',
-        bodyColor: '#8e8e93',
-        padding: 10,
+        backgroundColor: '#1c1917',
+        titleColor: '#e7e5e4',
+        bodyColor: '#a8a29e',
+        padding: 12,
+        cornerRadius: 10,
         callbacks: {
           label: (ctx: any) => {
             const pct = totalVotes > 0 ? Math.round((ctx.raw / totalVotes) * 100) : 0
-            return ` ${ctx.raw} votes (${pct}%)`
+            return ` ${ctx.raw} votes  ·  ${pct}%`
           }
         }
       }
@@ -103,114 +116,127 @@ export default function Poll() {
     scales: {
       y: {
         beginAtZero: true,
-        ticks: { stepSize: 1, color: '#4a4a4c', font: { size: 12 } },
-        grid: { color: '#2a2a2c' },
-        border: { color: '#2a2a2c' }
+        ticks: { stepSize: 1, color: '#a8a29e', font: { size: 13 } },
+        grid: { color: '#f5f5f4' },
+        border: { color: '#e7e5e4' }
       },
       x: {
-        ticks: { color: '#8e8e93', font: { size: 12 } },
+        ticks: { color: '#57534e', font: { size: 13 } },
         grid: { display: false },
-        border: { color: '#2a2a2c' }
+        border: { color: '#e7e5e4' }
       }
     }
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-[#1c1c1e] flex items-center justify-center font-sans">
+    <div className="min-h-screen bg-stone-50 flex items-center justify-center">
       <div className="text-center">
-        <div className="w-8 h-8 rounded-lg bg-[#c5a97d] mx-auto mb-4 animate-spin" />
-        <p className="text-[#636366] text-sm m-0">Loading poll...</p>
+        <div className="w-10 h-10 rounded-xl bg-amber-500 mx-auto mb-4 animate-spin shadow-sm" />
+        <p className="text-stone-400 text-base">Loading poll...</p>
       </div>
     </div>
   )
 
   if (error || !poll) return (
-    <div className="min-h-screen bg-[#1c1c1e] flex items-center justify-center font-sans">
+    <div className="min-h-screen bg-stone-50 flex items-center justify-center">
       <div className="text-center">
-        <p className="text-[2rem] m-0 mb-3">🔍</p>
-        <p className="text-[#e07a5f] text-[15px] m-0 mb-[6px]">Poll not found</p>
-        <p className="text-[#4a4a4c] text-[13px] m-0">This poll may have been deleted or the link is invalid.</p>
+        <p className="text-5xl m-0 mb-4">🔍</p>
+        <p className="text-stone-800 text-xl font-semibold m-0 mb-2">Poll not found</p>
+        <p className="text-stone-400 text-base m-0">This poll may have been deleted or the link is invalid.</p>
       </div>
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-[#1c1c1e] text-[#e8e6e0] font-sans px-6 py-6">
+    <div className="min-h-screen bg-stone-50 px-6 py-8">
 
-      <div className="max-w-[540px] mx-auto">
+      <div className="max-w-xl mx-auto">
 
         {/* Logo */}
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-[26px] h-[26px] rounded-[6px] bg-[#c5a97d] flex items-center justify-center text-[12px]">◎</div>
-          <span className="text-[#636366] text-[14px] font-mono">live polling</span>
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-lg shadow-sm">◎</div>
+          <span className="text-stone-600 text-base font-semibold">Live Polling</span>
         </div>
 
-        {/* Header */}
-        <div className="mb-7">
+        {/* Main card */}
+        <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm mb-4">
+
+          {/* Header */}
           <div className="flex items-start justify-between gap-4 mb-2">
-            <h1 className="m-0 text-[22px] font-medium tracking-tight leading-[1.3] text-[#e8e6e0]">
+            <h1 className="text-stone-900 text-2xl font-bold leading-snug tracking-tight m-0">
               {poll.question}
             </h1>
-            <span className={`text-[11px] px-2 py-[3px] rounded-[6px] font-mono shrink-0 mt-1 border ${
+            <span className={`text-sm px-3 py-1 rounded-full font-semibold shrink-0 mt-1 border ${
               poll.isActive
-                ? 'bg-[#1a2e20] text-[#7fcfa0] border-[#2a4a30]'
-                : 'bg-[#252525] text-[#636366] border-[#3a3a3a]'
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                : 'bg-stone-100 text-stone-500 border-stone-200'
             }`}>
-              {poll.isActive ? '● live' : '○ closed'}
+              {poll.isActive ? '● Live' : '○ Closed'}
             </span>
           </div>
-          <p className="m-0 text-[#4a4a4c] text-[13px] font-mono">
-            {totalVotes} {totalVotes === 1 ? 'vote' : 'votes'}
+          <p className="text-stone-400 text-sm mb-6">
+            {totalVotes} {totalVotes === 1 ? 'vote' : 'votes'} total
           </p>
+
+          {/* Vote options */}
+          {poll.isActive && !voted && (
+            <div className="flex flex-col gap-3 mb-2">
+              <p className="text-stone-600 text-sm font-semibold uppercase tracking-wide m-0">Choose an option</p>
+              {poll.options.map((option, i) => (
+                <button
+                  key={option.id}
+                  onClick={() => handleVote(option.id)}
+                  disabled={submitting}
+                  className="w-full text-left px-4 py-4 bg-stone-50 border-2 border-stone-200 rounded-xl text-stone-700 text-base font-medium cursor-pointer transition-all duration-150 flex items-center gap-3 hover:bg-amber-50 hover:border-amber-400 hover:text-stone-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="w-8 h-8 rounded-lg bg-white border-2 border-stone-200 flex items-center justify-center text-sm text-stone-500 font-semibold shrink-0">
+                    {String.fromCharCode(65 + i)}
+                  </span>
+                  {option.text}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Voted confirmation */}
+          {voted && poll.isActive && (
+            <div className="bg-emerald-50 border-2 border-emerald-200 rounded-xl px-4 py-4 flex items-center gap-3 mb-2">
+              <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                <span className="text-emerald-600 text-base font-bold">✓</span>
+              </div>
+              <div>
+                <p className="m-0 text-emerald-700 text-base font-semibold">Vote submitted!</p>
+                <p className="m-0 text-emerald-600 text-sm">Results are updating live below</p>
+              </div>
+            </div>
+          )}
+
+          {/* Closed state */}
+          {!poll.isActive && (
+            <div className="bg-stone-50 border-2 border-stone-200 rounded-xl px-4 py-4 mb-2">
+              <p className="m-0 text-stone-600 text-base font-medium">This poll is closed. Final results are shown below.</p>
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 flex items-center gap-2 mt-3">
+              <span className="text-red-500">⚠</span>
+              <p className="m-0 text-red-600 text-sm">{error}</p>
+            </div>
+          )}
         </div>
 
-        {/* Vote options */}
-        {poll.isActive && !voted && (
-          <div className="flex flex-col gap-2 mb-7">
-            {poll.options.map((option, i) => (
-              <button
-                key={option.id}
-                onClick={() => handleVote(option.id)}
-                disabled={submitting}
-                className="w-full text-left px-4 py-[13px] bg-[#252527] border border-[#3a3a3c] rounded-[12px] text-[#c8c6c0] text-sm cursor-pointer transition-all duration-150 flex items-center gap-3 hover:bg-[#2e2c28] hover:border-[#c5a97d] hover:text-[#e8e6e0] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span className="w-[22px] h-[22px] rounded-[6px] bg-[#2c2c2e] border border-[#3a3a3c] flex items-center justify-center text-[11px] text-[#636366] font-mono shrink-0">
-                  {String.fromCharCode(65 + i)}
-                </span>
-                {option.text}
-              </button>
-            ))}
+        {/* Chart card */}
+        <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-5">
+            <p className="text-stone-700 text-base font-semibold uppercase tracking-wide m-0">
+              Live Results
+            </p>
+            <span className="text-stone-400 text-sm bg-stone-50 border border-stone-200 px-3 py-1 rounded-full">
+              {totalVotes} votes
+            </span>
           </div>
-        )}
-
-        {/* Voted state */}
-        {voted && poll.isActive && (
-          <div className="bg-[#1a2e20] border border-[#2a4a30] rounded-[12px] px-4 py-[13px] flex items-center gap-[10px] mb-7">
-            <span className="text-[#7fcfa0] text-base">✓</span>
-            <div>
-              <p className="m-0 text-[#7fcfa0] text-sm font-medium">Vote submitted</p>
-              <p className="m-0 text-[#3a6a48] text-[12px]">Results update live as others vote</p>
-            </div>
-          </div>
-        )}
-
-        {/* Closed state */}
-        {!poll.isActive && (
-          <div className="bg-[#252525] border border-[#3a3a3a] rounded-[12px] px-4 py-[13px] mb-7">
-            <p className="m-0 text-[#636366] text-sm">This poll is closed. Final results below.</p>
-          </div>
-        )}
-
-        {/* Error */}
-        {error && (
-          <div className="bg-[#2e1e1a] border border-[#4a2a24] rounded-[10px] px-[14px] py-[10px] mb-6">
-            <p className="m-0 text-[#e07a5f] text-[13px]">{error}</p>
-          </div>
-        )}
-
-        {/* Chart */}
-        <div className="bg-[#252527] border border-[#3a3a3c] rounded-2xl p-6">
-          <p className="m-0 mb-5 text-[12px] text-[#636366] font-mono tracking-[0.3px]">LIVE RESULTS</p>
           <Bar data={chartData} options={chartOptions} />
         </div>
 

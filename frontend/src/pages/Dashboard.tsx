@@ -9,7 +9,7 @@ interface Poll {
   isActive: boolean; options: Option[]
 }
 
-const inputClass = "w-full bg-[#2c2c2e] border border-[#3a3a3c] rounded-[10px] px-[14px] py-[11px] text-[#e8e6e0] text-sm placeholder-[#636366] outline-none transition-colors duration-200 focus:border-[#c5a97d] focus:bg-[#323234]"
+const inputClass = "w-full bg-white border-2 border-stone-200 rounded-xl px-4 py-3 text-stone-800 text-base placeholder-stone-400 outline-none transition-all duration-200 focus:border-amber-500 focus:ring-4 focus:ring-amber-100"
 
 export default function Dashboard() {
   const { getToken, logout } = useAuth()
@@ -73,39 +73,45 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1c1c1e] text-[#e8e6e0] font-sans">
+    <div className="min-h-screen bg-stone-50 text-stone-800">
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-10 border-b border-[#2a2a2c] px-6 h-[54px] flex items-center justify-between bg-[#1c1c1eee] backdrop-blur-[10px]">
-        <div className="flex items-center gap-[10px]">
-          <div className="w-7 h-7 rounded-[7px] bg-[#c5a97d] flex items-center justify-center text-[13px]">◎</div>
-          <span className="text-[#e8e6e0] text-[15px] font-medium tracking-tight">Live Polling</span>
+      <nav className="sticky top-0 z-10 bg-white border-b border-stone-200 px-6 h-16 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-lg shadow-sm">◎</div>
+          <span className="text-stone-800 text-lg font-semibold tracking-tight">Live Polling</span>
         </div>
         <button
           onClick={() => { logout(); navigate('/login') }}
-          className="bg-transparent border border-[#3a3a3c] text-[#8e8e93] px-[14px] py-[7px] rounded-lg text-[13px] cursor-pointer transition-colors duration-150 hover:border-[#e07a5f] hover:text-[#e07a5f]"
+          className="border-2 border-stone-200 text-stone-600 px-4 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all duration-150 hover:border-red-300 hover:text-red-500 hover:bg-red-50"
         >
           Sign out
         </button>
       </nav>
 
-      <div className="max-w-[660px] mx-auto px-6 py-8 flex flex-col gap-8">
+      <div className="max-w-2xl mx-auto px-6 py-8 flex flex-col gap-8">
 
-        {/* Create Poll */}
-        <div className="bg-[#252527] border border-[#3a3a3c] rounded-2xl p-6">
-          <h2 className="text-[#c5a97d] text-[13px] font-mono tracking-[0.3px] mb-5">NEW POLL</h2>
+        {/* Create Poll Card */}
+        <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
+              <span className="text-amber-600 text-base font-bold">+</span>
+            </div>
+            <h2 className="text-stone-800 text-lg font-semibold m-0">Create a new poll</h2>
+          </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             <input
               className={inputClass} value={question}
               onChange={e => setQuestion(e.target.value)}
               placeholder="Ask your question..."
             />
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3">
+              <p className="text-stone-600 text-sm font-semibold uppercase tracking-wide m-0">Options</p>
               {options.map((opt, i) => (
-                <div key={i} className="flex gap-2 items-center">
-                  <span className="text-[#636366] text-[12px] font-mono min-w-[18px]">
+                <div key={i} className="flex gap-3 items-center">
+                  <span className="w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center text-stone-500 text-sm font-semibold shrink-0">
                     {String.fromCharCode(65 + i)}
                   </span>
                   <input
@@ -115,114 +121,115 @@ export default function Dashboard() {
                   />
                   <button
                     onClick={() => handleRemoveOption(i)}
-                    className="bg-transparent border-none text-[#4a4a4c] cursor-pointer px-1 text-lg leading-none transition-colors duration-150 hover:text-[#e07a5f]"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-400 hover:text-red-500 hover:bg-red-50 transition-colors duration-150 text-lg border-none bg-transparent cursor-pointer shrink-0"
                   >×</button>
                 </div>
               ))}
               <button
                 onClick={handleAddOption}
-                className="w-full bg-transparent border border-dashed border-[#3a3a3c] rounded-[10px] py-[10px] text-[#636366] text-[13px] cursor-pointer transition-all duration-150 hover:border-[#c5a97d] hover:text-[#c5a97d] hover:bg-[#252520]"
+                className="w-full bg-transparent border-2 border-dashed border-stone-200 rounded-xl py-3 text-stone-400 text-sm font-medium cursor-pointer transition-all duration-150 hover:border-amber-400 hover:text-amber-500 hover:bg-amber-50"
               >
-                + add option{' '}
-                {options.length < 6 && <span className="text-[#4a4a4c]">({6 - options.length} left)</span>}
+                + Add option {options.length < 6 && <span className="text-stone-300">({6 - options.length} remaining)</span>}
               </button>
             </div>
 
-            <div className="flex flex-col gap-[6px]">
-              <label className="text-[#636366] text-[12px] font-mono tracking-[0.3px]">
-                EXPIRES AT <span className="text-[#4a4a4c]">(optional)</span>
+            <div className="flex flex-col gap-2">
+              <label className="text-stone-600 text-sm font-semibold uppercase tracking-wide">
+                Expiry date{' '}
+                <span className="text-stone-400 text-xs font-normal normal-case">(optional)</span>
               </label>
               <input
-                type="datetime-local" className={inputClass} value={expiresAt}
+                type="datetime-local"
+                className={inputClass} value={expiresAt}
                 onChange={e => setExpiresAt(e.target.value)}
                 min={new Date(Date.now() + 3 * 60 * 1000).toISOString().slice(0, 16)}
               />
             </div>
 
             {error && (
-              <p className="m-0 text-[#e07a5f] text-[13px] bg-[#2e1e1a] px-3 py-2 rounded-lg border border-[#4a2a24]">
-                {error}
-              </p>
+              <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 flex items-center gap-2">
+                <span className="text-red-500">⚠</span>
+                <p className="text-red-600 text-sm m-0">{error}</p>
+              </div>
             )}
 
             <button
               onClick={handleCreate} disabled={loading}
-              className="w-full py-3 bg-[#c5a97d] text-[#1c1c1e] rounded-[10px] text-sm font-medium cursor-pointer transition-colors duration-200 hover:bg-[#d4b98a] disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full py-3 bg-amber-500 text-white rounded-xl text-base font-semibold cursor-pointer transition-all duration-200 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
             >
               {loading ? 'Creating...' : 'Create poll'}
             </button>
           </div>
         </div>
 
-        {/* Poll list */}
+        {/* Poll List */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="m-0 text-[#636366] text-[13px] font-mono tracking-[0.3px]">YOUR POLLS</h2>
-            {polls.length > 0 && <span className="text-[#4a4a4c] text-[13px]">{polls.length} total</span>}
+            <h2 className="text-stone-700 text-base font-semibold uppercase tracking-wide m-0">Your polls</h2>
+            {polls.length > 0 && (
+              <span className="text-stone-400 text-sm bg-stone-100 px-3 py-1 rounded-full">{polls.length} total</span>
+            )}
           </div>
 
           {fetchLoading ? (
-            <div className="flex flex-col gap-[10px]">
+            <div className="flex flex-col gap-3">
               {[1, 2].map(i => (
-                <div key={i} className="bg-[#252527] border border-[#3a3a3c] rounded-[14px] p-5 opacity-50">
-                  <div className="h-[13px] bg-[#3a3a3c] rounded w-[55%] mb-[10px]" />
-                  <div className="h-[11px] bg-[#3a3a3c] rounded w-[25%] opacity-60" />
+                <div key={i} className="bg-white border border-stone-200 rounded-2xl p-5 animate-pulse">
+                  <div className="h-4 bg-stone-100 rounded-lg w-3/5 mb-3" />
+                  <div className="h-3 bg-stone-100 rounded-lg w-1/4" />
                 </div>
               ))}
             </div>
           ) : polls.length === 0 ? (
-            <div className="text-center py-12 px-4 border border-dashed border-[#2a2a2c] rounded-[14px]">
-              <p className="text-[1.75rem] m-0 mb-[10px]">🗳️</p>
-              <p className="text-[#636366] text-sm m-0 mb-1">No polls yet</p>
-              <p className="text-[#3a3a3c] text-[13px] m-0">Create your first poll above and share it with anyone</p>
+            <div className="text-center py-16 px-4 bg-white border-2 border-dashed border-stone-200 rounded-2xl">
+              <p className="text-4xl m-0 mb-3">🗳️</p>
+              <p className="text-stone-700 text-lg font-medium m-0 mb-2">No polls yet</p>
+              <p className="text-stone-400 text-base m-0">Create your first poll above and share it with anyone</p>
             </div>
           ) : (
-            <div className="flex flex-col gap-[10px]">
+            <div className="flex flex-col gap-3">
               {polls.map(poll => (
-                <div
-                  key={poll.id}
-                  className="bg-[#252527] border border-[#3a3a3c] rounded-[14px] p-5 transition-colors duration-200 hover:border-[#4a4a4c]"
-                >
+                <div key={poll.id} className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1 mr-4">
-                      <p className="m-0 mb-1 text-sm font-medium text-[#d8d6d0] leading-[1.4]">{poll.question}</p>
-                      <p className="m-0 text-[12px] text-[#4a4a4c] font-mono">{poll.options.length} options</p>
+                      <p className="text-stone-800 text-base font-semibold m-0 mb-1 leading-snug">{poll.question}</p>
+                      <p className="text-stone-400 text-sm m-0">{poll.options.length} options</p>
                     </div>
-                    <span className={`text-[11px] px-2 py-[3px] rounded-[6px] font-mono shrink-0 border ${
+                    <span className={`text-xs px-3 py-1 rounded-full font-semibold shrink-0 border ${
                       poll.isActive
-                        ? 'bg-[#1a2e20] text-[#7fcfa0] border-[#2a4a30]'
-                        : 'bg-[#252525] text-[#636366] border-[#3a3a3a]'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : 'bg-stone-100 text-stone-500 border-stone-200'
                     }`}>
-                      {poll.isActive ? '● live' : '○ closed'}
+                      {poll.isActive ? '● Live' : '○ Closed'}
                     </span>
                   </div>
 
                   <div className="flex gap-2 flex-wrap">
                     <Link
                       to={`/poll/${poll.shareCode}`}
-                      className="text-[12px] px-3 py-[6px] rounded-lg border border-[#3a3a3c] text-[#8e8e93] no-underline transition-all duration-150 hover:bg-[#2c2c2e] hover:text-[#c8c6c0] hover:border-[#4a4a4c]"
+                      className="text-sm px-4 py-2 rounded-xl border-2 border-stone-200 text-stone-600 font-medium no-underline transition-all duration-150 hover:bg-stone-50 hover:border-stone-300"
                     >
-                      View
+                      View poll
                     </Link>
                     <button
                       onClick={() => copyLink(poll.shareCode, poll.id)}
-                      className={`text-[12px] px-3 py-[6px] rounded-lg border cursor-pointer transition-all duration-150 ${
+                      className={`text-sm px-4 py-2 rounded-xl border-2 font-medium cursor-pointer transition-all duration-150 ${
                         copiedId === poll.id
-                          ? 'text-[#7fcfa0] border-[#2a4a38] bg-[#1a2e24]'
-                          : 'border-[#3a3a3c] text-[#8e8e93] bg-transparent hover:bg-[#2c2c2e] hover:text-[#c8c6c0] hover:border-[#4a4a4c]'
+                          ? 'text-emerald-700 border-emerald-300 bg-emerald-50'
+                          : 'border-stone-200 text-stone-600 bg-transparent hover:bg-stone-50 hover:border-stone-300'
                       }`}
                     >
-                      {copiedId === poll.id ? '✓ Copied' : 'Copy link'}
+                      {copiedId === poll.id ? '✓ Copied!' : 'Copy link'}
                     </button>
                     <button
                       onClick={() => handleToggle(poll.id)}
-                      className="text-[12px] px-3 py-[6px] rounded-lg border border-[#3a3a3c] text-[#8e8e93] bg-transparent cursor-pointer transition-all duration-150 hover:bg-[#2c2c2e] hover:text-[#c8c6c0] hover:border-[#4a4a4c]"
+                      className="text-sm px-4 py-2 rounded-xl border-2 border-stone-200 text-stone-600 font-medium bg-transparent cursor-pointer transition-all duration-150 hover:bg-stone-50 hover:border-stone-300"
                     >
                       {poll.isActive ? 'Close' : 'Reopen'}
                     </button>
                     <button
                       onClick={() => handleDelete(poll.id)}
-                      className="text-[12px] px-3 py-[6px] rounded-lg border border-[#3a2420] text-[#e07a5f] bg-transparent cursor-pointer transition-all duration-150 hover:bg-[#2a1a18]"
+                      className="text-sm px-4 py-2 rounded-xl border-2 border-red-200 text-red-500 font-medium bg-transparent cursor-pointer transition-all duration-150 hover:bg-red-50"
                     >
                       Delete
                     </button>
